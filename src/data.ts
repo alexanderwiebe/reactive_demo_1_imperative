@@ -1,8 +1,14 @@
+import { FormControl } from "@angular/forms";
+
 export type Person = {
   name: string;
   height: number;
   age: number; // just a number
   department: 'Engineering' | 'Marketing' | 'Sales';
+};
+
+export type PersonForm = {
+  [K in keyof Person]: FormControl<Person[K]>;
 };
 
 export const datalist: Person[] = [
