@@ -1,3 +1,4 @@
+import { AsyncPipe } from "@angular/common";
 import {
   Component,
   inject,
@@ -12,9 +13,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { AsyncPipe } from "@angular/common";
 import { bootstrapApplication } from "@angular/platform-browser";
-import { BehaviorSubject, Observable } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 import { datalist, Person, PersonForm } from "./data";
 
 @Injectable({
@@ -75,9 +75,19 @@ export class TableDataService {
         }
         <tr [formGroup]="personForm">
           <td>Add User</td>
-          <td><input formControlName="name" type="text" placeholder="name" /></td>
-          <td><input formControlName="height" type="number" placeholder="height" /></td>
-          <td><input formControlName="age" type="number" placeholder="age" /></td>
+          <td>
+            <input formControlName="name" type="text" placeholder="name" />
+          </td>
+          <td>
+            <input
+              formControlName="height"
+              type="number"
+              placeholder="height"
+            />
+          </td>
+          <td>
+            <input formControlName="age" type="number" placeholder="age" />
+          </td>
           <td>
             <select id="department" formControlName="department">
               <option value="Engineering">Engineering</option>
@@ -119,13 +129,17 @@ export class TablePresenterComponent implements OnChanges {
   nameChange(event: Event) {
     const nameFilter = (event.target as HTMLInputElement)?.value; // should this be stored locally?
     this.filteredPersons =
-      this.persons?.filter((person) => person.name.toLowerCase().includes(nameFilter.toLowerCase())) ?? [];
+      this.persons?.filter((person) =>
+        person.name.toLowerCase().includes(nameFilter.toLowerCase())
+      ) ?? [];
   }
 
   addUser(event$: Event) {
-    if(this.personForm.valid) {
+    if (this.personForm.valid) {
       this.persons?.push(this.personForm.value);
-      // see the problem? I have to try and get the value of the name filter... 
+      // everywhere that changes the persons should update the filteredPersons
+      this.filteredPersons = this.persons ?? [];
+      // see the problem? I have to try and get the value of the name filter...
       // this.filteredPersons = this.persons?.filter((person) => person.name.toLowerCase().includes(nameFilter.toLowerCase())) ?? [];
       this.personForm.reset();
     }
